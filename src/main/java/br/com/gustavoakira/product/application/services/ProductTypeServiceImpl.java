@@ -21,12 +21,12 @@ public class ProductTypeServiceImpl implements ProductTypeServicePort {
     }
 
     @Override
-    public Mono update(UUID id, ProductType type) {
+    public Mono<ProductType> update(UUID id, ProductType type) {
         return repositoryPort.update(id, type);
     }
 
     @Override
-    public Mono remove(UUID id) {
+    public Mono<Void> remove(UUID id) {
         return repositoryPort.delete(id);
     }
 

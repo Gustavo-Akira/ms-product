@@ -10,12 +10,10 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Component
 @Primary
@@ -32,27 +30,19 @@ public class PostgresProductRepository implements ProductRepositoryPort {
     @Override
     public Mono<Product> save(Product product) {
         Mono<ProductEntity> monoProductEntity = repository.save(modelMapper.map(product,ProductEntity.class));
-
-        return monoProductEntity.flatMap(x->{
-            Product response = modelMapper.map(x,Product.class);
-            return Mono.just(response);
-        });
+        return monoProductEntity.map(x->modelMapper.map(x,Product.class));
     }
 
     @Override
     public Flux<Product> findAll() {
         Flux<ProductEntity> productsEntities = repository.findAll();
-        Stream<Product> products = productsEntities.collectList().block().stream().map(x->modelMapper.map(x,Product.class));
-        return Flux.fromStream(products);
+        return productsEntities.map(x->modelMapper.map(x,Product.class));
     }
 
     @Override
     public Mono<Product> findById(UUID productId) {
         Mono<ProductEntity> entity = repository.findById(productId);
-        return entity.flatMap(x->{
-            Product response= modelMapper.map(x,Product.class);
-            return Mono.just(response);
-        });
+        return entity.map(x->modelMapper.map(x,Product.class));
     }
 
     @Override

@@ -6,14 +6,13 @@ import br.com.gustavoakira.product.application.ports.ProductTypeRepositoryPort;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Component
 @Primary
@@ -34,7 +33,7 @@ public class PostgresProductTypeRepository implements ProductTypeRepositoryPort 
         return productTypeEntity.flatMap(x->{
             ProductType productType = modelMapper.map(x,ProductType.class);
             return Mono.just(productType);
-        });
+        }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
     }
 
     @Override
@@ -47,25 +46,25 @@ public class PostgresProductTypeRepository implements ProductTypeRepositoryPort 
     @Override
     public Mono<ProductType> findById(UUID id) {
         Mono<ProductTypeEntity> productTypeEntity = repository.findById(id);
-        return productTypeEntity.flatMap(x-> Mono.just(modelMapper.map(x,ProductType.class)));
+        return productTypeEntity.flatMap(x-> Mono.just(modelMapper.map(x,ProductType.class))).switchIfEmpty(Mono.create(x->{
+            throw new NoSuchElementException("");
+        }));
     }
 
     @Override
-    public Mono update(UUID id, ProductType type) {
+    public Mono<ProductType> update(UUID id, ProductType type) {
         Mono<ProductTypeEntity> productTypeEntityMono = repository.findById(id);
-        if(productTypeEntityMono.blockOptional().isEmpty()){
+        return productTypeEntityMono.flatMap(x->{
             type.setId(id);
-            repository.save(modelMapper.map(type,ProductTypeEntity.class));
-        }
-        return Mono.empty();
+            return repository.save(modelMapper.map(type,ProductTypeEntity.class)).map(y->modelMapper.map(y,ProductType.class));
+        }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
     }
 
     @Override
-    public Mono delete(UUID id) {
+    public Mono<Void> delete(UUID id) {
         Mono<ProductTypeEntity> productTypeEntityMono = repository.findById(id);
-        if(productTypeEntityMono.blockOptional().isEmpty()){
-            repository.deleteById(id);
-        }
-        return Mono.empty();
+        return productTypeEntityMono.flatMap(x->{
+            return repository.deleteById(id);
+        });
     }
 }
