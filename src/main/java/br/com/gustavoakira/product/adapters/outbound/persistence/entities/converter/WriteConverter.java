@@ -12,6 +12,9 @@ public class WriteConverter implements Converter<ProductEntity,OutboundRow> {
     @Override
     public OutboundRow convert(ProductEntity source) {
         OutboundRow row = new OutboundRow();
+        if(source.getId() != null){
+            row.put("id",Parameter.from(source.getId()));
+        }
         row.put("name", Parameter.from(source.getName()));
         row.put("price",Parameter.from(source.getPrice()));
         row.put("quantity",Parameter.from(source.getQuantity()));

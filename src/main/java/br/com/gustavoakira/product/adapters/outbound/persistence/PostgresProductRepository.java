@@ -54,7 +54,7 @@ public class PostgresProductRepository implements ProductRepositoryPort {
         Mono<ProductEntity> productEntityMono = repository.findById(productId);
         return productEntityMono.flatMap(x->{
             product.setId(productId);
-            return repository.save(modelMapper.map(product, ProductEntity.class)).map(y->modelMapper.map(y, Product.class));
+            return repository.save(modelMapper.map(product,ProductEntity.class)).map(y->modelMapper.map(y,Product.class));
         }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
     }
 
