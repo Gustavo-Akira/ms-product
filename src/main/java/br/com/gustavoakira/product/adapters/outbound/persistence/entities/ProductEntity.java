@@ -21,5 +21,5 @@ public class ProductEntity implements Serializable {
 
     private Integer quantity;
 
-    private ProductTypeEntity typeEntity;
+    private ProductTypeEntity type;
 }

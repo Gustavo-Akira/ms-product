@@ -1,10 +1,12 @@
 package br.com.gustavoakira.product.adapters.outbound.persistence;
 
 import br.com.gustavoakira.product.adapters.outbound.persistence.entities.ProductEntity;
+import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -12,6 +14,10 @@ import java.util.UUID;
 public interface SpringReactivePostgresProductRepository  extends ReactiveCrudRepository<ProductEntity, UUID> {
 
     @Override
-    @Query("select product.*, product_type.id as productId, product_type.name as productName from ProductEntity product join ProductTypeEntity product_type.id = product.type_id")
+    @Query("select product.*, product_type.id as typeId, product_type.name as typeName from Product product join Product_Type product_type on product_type.id = product.product_type_id")
     Flux<ProductEntity> findAll();
+
+    @Override
+    @Query("select product.*, product_type.id as typeId, product_type.name as typeName from Product product join Product_Type product_type on product_type.id = product.product_type_id where product.id=:uuid")
+    Mono<ProductEntity> findById(UUID uuid);
 }

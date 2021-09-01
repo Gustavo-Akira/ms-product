@@ -3,3 +3,10 @@ spring:
     url: r2dbc:postgresql://localhost/products
     username: postgres
     password: 123456
+db:
+  config:
+    host: localhost
+    port: 5432
+    database: products
+    username: postgres
+    password: 123456

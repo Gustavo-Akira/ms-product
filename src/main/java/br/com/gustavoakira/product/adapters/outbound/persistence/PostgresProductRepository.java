@@ -1,7 +1,9 @@
 package br.com.gustavoakira.product.adapters.outbound.persistence;
 
 import br.com.gustavoakira.product.adapters.outbound.persistence.entities.ProductEntity;
+import br.com.gustavoakira.product.adapters.outbound.persistence.entities.ProductTypeEntity;
 import br.com.gustavoakira.product.application.domain.Product;
+import br.com.gustavoakira.product.application.domain.ProductType;
 import br.com.gustavoakira.product.application.ports.ProductRepositoryPort;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ public class PostgresProductRepository implements ProductRepositoryPort {
 
     @Override
     public Mono<Product> save(Product product) {
+
         Mono<ProductEntity> monoProductEntity = repository.save(modelMapper.map(product,ProductEntity.class));
         return monoProductEntity.map(x->modelMapper.map(x,Product.class));
     }
@@ -46,22 +50,19 @@ public class PostgresProductRepository implements ProductRepositoryPort {
     }
 
     @Override
-    public Mono update(UUID productId, Product product) {
+    public Mono<Product> update(UUID productId, Product product) {
         Mono<ProductEntity> productEntityMono = repository.findById(productId);
-        productEntityMono.doOnNext(x->{
-            product.setId(x.getId());
-            repository.save(modelMapper.map(product,ProductEntity.class));
-        });
-        return Mono.empty();
+        return productEntityMono.flatMap(x->{
+            product.setId(productId);
+            return repository.save(modelMapper.map(product, ProductEntity.class)).map(y->modelMapper.map(y, Product.class));
+        }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
     }
 
     @Override
-    public Mono delete(UUID productId) {
+    public Mono<Void> delete(UUID productId) {
         Mono<ProductEntity> productEntityMono = repository.findById(productId);
-        Optional<ProductEntity> productEntity = productEntityMono.blockOptional();
-        if(!productEntity.isEmpty()){
-            repository.deleteById(productId);
-        }
-        return Mono.empty();
+        return productEntityMono.flatMap(x->{
+            return repository.deleteById(productId);
+        });
     }
 }

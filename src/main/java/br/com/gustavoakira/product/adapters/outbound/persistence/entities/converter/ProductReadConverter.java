@@ -7,7 +7,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 
 import java.util.UUID;
-
 @ReadingConverter
 public class ProductReadConverter implements Converter<Row, ProductEntity> {
 
@@ -20,8 +19,13 @@ public class ProductReadConverter implements Converter<Row, ProductEntity> {
         productEntity.setId(source.get("id",UUID.class));
         productEntity.setName(source.get("name",String.class));
         productEntity.setQuantity(source.get("quantity",Integer.class));
-        productEntity.setTypeEntity(productTypeEntity);
+        productEntity.setPrice(source.get("price",Double.class));
+        productEntity.setType(productTypeEntity);
         return productEntity;
     }
 
+    @Override
+    public <U> Converter<Row, U> andThen(Converter<? super ProductEntity, ? extends U> after) {
+        return Converter.super.andThen(after);
+    }
 }
