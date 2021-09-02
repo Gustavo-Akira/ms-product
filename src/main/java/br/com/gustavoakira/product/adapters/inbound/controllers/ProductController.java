@@ -1,6 +1,7 @@
 package br.com.gustavoakira.product.adapters.inbound.controllers;
 
 import br.com.gustavoakira.product.adapters.dtos.ProductDto;
+import br.com.gustavoakira.product.application.domain.Page;
 import br.com.gustavoakira.product.application.domain.Product;
 import br.com.gustavoakira.product.application.domain.ProductType;
 import br.com.gustavoakira.product.application.ports.ProductServicePort;
@@ -34,9 +35,9 @@ public class ProductController {
                     return productServicePort.save(product);
                 });
     }
-    @GetMapping("/products")
-    public Flux<Product> getProducts(){
-        return productServicePort.getAll();
+    @GetMapping("/products/{page}/{limit}")
+    public Flux<Product> getProducts(@PathVariable("page") Integer page, @PathVariable("limit") Integer limit){
+        return productServicePort.getAll(new Page(page,limit));
     }
 
     @GetMapping("/product/{id}")

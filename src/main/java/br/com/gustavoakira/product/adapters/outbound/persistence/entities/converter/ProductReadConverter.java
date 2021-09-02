@@ -21,6 +21,9 @@ public class ProductReadConverter implements Converter<Row, ProductEntity> {
         productEntity.setQuantity(source.get("quantity",Integer.class));
         productEntity.setPrice(source.get("price",Double.class));
         productEntity.setType(productTypeEntity);
+        if(!source.get("pages",Integer.class).equals(null)){
+            productEntity.setPages(source.get("pages",Integer.class));
+        }
         return productEntity;
     }
 

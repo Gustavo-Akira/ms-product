@@ -1,5 +1,6 @@
 package br.com.gustavoakira.product.application.services;
 
+import br.com.gustavoakira.product.application.domain.Page;
 import br.com.gustavoakira.product.application.domain.Product;
 import br.com.gustavoakira.product.application.ports.ProductRepositoryPort;
 import br.com.gustavoakira.product.application.ports.ProductServicePort;
@@ -22,8 +23,8 @@ public class ProductService implements ProductServicePort {
     }
 
     @Override
-    public Flux<Product> getAll() {
-        return productRepositoryPort.findAll();
+    public Flux<Product> getAll(Page page) {
+        return productRepositoryPort.findAll(page);
     }
 
     @Override

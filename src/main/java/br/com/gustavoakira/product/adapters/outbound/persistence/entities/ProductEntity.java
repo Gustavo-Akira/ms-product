@@ -22,4 +22,6 @@ public class ProductEntity implements Serializable {
     private Integer quantity;
 
     private ProductTypeEntity type;
+
+    private Integer pages = 0;
 }

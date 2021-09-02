@@ -14,6 +14,7 @@ public class Product {
     private Double price;
     private Integer quantity;
     private ProductType type;
+    private int pages=0;
 
     public Product(ProductDto dto){
         this.price = dto.getPrice();

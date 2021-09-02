@@ -20,4 +20,9 @@ public interface SpringReactivePostgresProductRepository  extends ReactiveCrudRe
     @Override
     @Query("select product.*, product_type.id as typeId, product_type.name as typeName from Product product join Product_Type product_type on product_type.id = product.product_type_id where product.id=:uuid")
     Mono<ProductEntity> findById(UUID uuid);
+
+    @Query("select count(product.id) as pages, product.*, product_type.id as typeId, product_type.name as typeName from Product product" +
+            " join Product_Type product_type on product_type.id = product.product_type_id  GROUP BY product.id,product_type.id " +
+            "offset :page limit :limit")
+    Flux<ProductEntity> findAll(int page, int limit);
 }

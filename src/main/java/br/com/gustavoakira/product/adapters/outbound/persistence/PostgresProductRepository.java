@@ -2,12 +2,14 @@ package br.com.gustavoakira.product.adapters.outbound.persistence;
 
 import br.com.gustavoakira.product.adapters.outbound.persistence.entities.ProductEntity;
 import br.com.gustavoakira.product.adapters.outbound.persistence.entities.ProductTypeEntity;
+import br.com.gustavoakira.product.application.domain.Page;
 import br.com.gustavoakira.product.application.domain.Product;
 import br.com.gustavoakira.product.application.domain.ProductType;
 import br.com.gustavoakira.product.application.ports.ProductRepositoryPort;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,8 +40,8 @@ public class PostgresProductRepository implements ProductRepositoryPort {
     }
 
     @Override
-    public Flux<Product> findAll() {
-        Flux<ProductEntity> productsEntities = repository.findAll();
+    public Flux<Product> findAll(Page page) {
+        Flux<ProductEntity> productsEntities = repository.findAll(page.getPageNumber()* page.getPageSize(),page.getPageSize());
         return productsEntities.map(x->modelMapper.map(x,Product.class));
     }
 
