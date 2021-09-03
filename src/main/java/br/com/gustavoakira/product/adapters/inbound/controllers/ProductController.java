@@ -55,6 +55,16 @@ public class ProductController {
                 });
     }
 
+    @PatchMapping("/product/{id}/add/{quantity}")
+    public Mono<Product> addProduct(@PathVariable("quantity") Integer quantity, @PathVariable("id") UUID id){
+        return  productServicePort.addProducts(id,quantity);
+    }
+
+    @PatchMapping("/product/{id}/minus/{quantity}")
+    public Mono<Product> retireProduct(@PathVariable("quantity") Integer quantity, @PathVariable("id") UUID id){
+        return  productServicePort.retireProducts(id,quantity);
+    }
+
     @DeleteMapping("/product/{id}")
     public Mono<Void> removeProduct(@PathVariable UUID id){
         return productServicePort.remove(id);

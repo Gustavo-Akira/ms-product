@@ -14,4 +14,6 @@ public interface ProductRepositoryPort {
     Mono<Product> findById(UUID productId);
     Mono<Product> update(UUID productId, Product product);
     Mono<Void> delete(UUID productId);
+    Mono<Product> retireProduct(UUID id, Integer quantity);
+    Mono<Product> addProducts(UUID id, Integer quantity);
 }

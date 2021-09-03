@@ -13,4 +13,6 @@ public interface ProductServicePort {
     Mono<Product> getOne(UUID id);
     Flux<Product> getAll(Page page);
     Mono<Void> remove(UUID id);
+    Mono<Product> retireProducts(UUID id, Integer quantity);
+    Mono<Product> addProducts(UUID id, Integer quantity);
 }

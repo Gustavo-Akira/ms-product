@@ -41,4 +41,14 @@ public class ProductService implements ProductServicePort {
     public Mono<Void> remove(UUID productId) {
         return productRepositoryPort.delete(productId);
     }
+
+    @Override
+    public Mono<Product> retireProducts(UUID id, Integer quantity) {
+        return productRepositoryPort.retireProduct(id, quantity);
+    }
+
+    @Override
+    public Mono<Product> addProducts(UUID id, Integer quantity) {
+        return productRepositoryPort.addProducts(id,quantity);
+    }
 }

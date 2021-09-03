@@ -34,7 +34,6 @@ public class PostgresProductRepository implements ProductRepositoryPort {
 
     @Override
     public Mono<Product> save(Product product) {
-
         Mono<ProductEntity> monoProductEntity = repository.save(modelMapper.map(product,ProductEntity.class));
         return monoProductEntity.map(x->modelMapper.map(x,Product.class));
     }
@@ -66,5 +65,25 @@ public class PostgresProductRepository implements ProductRepositoryPort {
         return productEntityMono.flatMap(x->{
             return repository.deleteById(productId);
         });
+    }
+
+    @Override
+    public Mono<Product> retireProduct(UUID id, Integer quantity) {
+        return repository.findById(id).flatMap(x->{
+            x.setQuantity(x.getQuantity() - quantity);
+            return repository.save(x).map(y->{
+               return modelMapper.map(y,Product.class);
+            });
+        }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
+    }
+
+    @Override
+    public Mono<Product> addProducts(UUID id, Integer quantity) {
+        return repository.findById(id).flatMap(x->{
+            x.setQuantity(x.getQuantity() + quantity);
+            return repository.save(x).map(y->{
+                return modelMapper.map(y,Product.class);
+            });
+        }).switchIfEmpty(Mono.create(x->{throw new NoSuchElementException();}));
     }
 }
