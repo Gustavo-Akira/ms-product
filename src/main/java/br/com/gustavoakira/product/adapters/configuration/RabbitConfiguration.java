@@ -12,26 +12,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfiguration {
 
-    @Value("${spring.rabbitmq.queue}")
-    private String queue;
 
-    @Value("{rabbit.uri}")
-    private String uri;
+
+
+    @Value("${rabbitmq.order}")
+    private String order;
+
+    @Value("${rabbitmq.product}")
+    private String product;
 
     @Bean
     public Queue queue(){
-        return new Queue(queue,true);
+        return new Queue(order,true);
     }
+
+    @Bean
+    public Queue queue1(){
+        return new Queue(product,true);
+    }
+
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter(){
         return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public ConnectionFactory rabbitConnectionFactory(){
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        return connectionFactory;
     }
 
 }

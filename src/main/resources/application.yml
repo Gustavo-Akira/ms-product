@@ -1,6 +1,7 @@
 spring:
   rabbitmq:
-    queue: ms.order
+    username: akira
+    password: akira
   r2dbc:
     url: r2dbc:postgresql://localhost/products
     username: postgres
@@ -12,5 +13,8 @@ db:
     database: products
     username: postgres
     password: 123456
+
 rabbitmq:
   uri: localhost
+  order: ms-order
+  product: ms-product
